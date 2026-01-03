@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:./db/custom.db
+    volumes:
+      # Montar código para hot reload em desenvolvimento
+      - .:/app
+      # Persistir uploads
+      - uploads_data:/app/public/uploads
+      - uploads_cartas:/app/public/uploads/cartas
+      - uploads_documentos:/app/public/uploads/documentos
+      # Persistar banco de dados
+      - db_data:/app/db
+    depends_on:
+      - db
+
+  db:
+    image: sqlite3:latest
+    # Para ver dados do banco
+    volumes:
+      - db_data:/data
+    command: tail -f data.db
+    # Usar volume persistente em produção
+    # volumes:
+    #   - db_data:/data
+
+volumes:
+  uploads_data:
+  uploads_cartas:
+  uploads_documentos:
+  db_data:

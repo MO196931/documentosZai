@@ -1,0 +1,18 @@
+              <Button
+                onClick={handleSave}
+                disabled={loading || uploadedFotos.length === 0}
+                className="flex-1"
+                size="lg"
+              >
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Salvar Documento
+              </Button>
+              <Button
+                onClick={() => {
+                  setUploadedFotos([])
+                  setDocumentoData({ ativo: true })
+                }}
+                variant="outline"
+              >
+                Limpar
+              </Button>

@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  apelido       String?
+  telefone      String?
+  morada        String?
+  ativo         Boolean   @default(true)
+  dataNascimento String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userRoles     UserRole[]
+  documentoId   String?   @unique
+}
+
+// Papéis/Roles do sistema
+model Role {
+  id          String    @id @default(cuid())
+  nome        String    @unique
+  descricao   String?
+  permissoes  String?   // JSON com permissões
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userRoles   UserRole[]
+}
+
+// Associação entre User e Role (muitos-para-muitos)
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tipos de documentos de identificação
+model TipoDocumento {
+  id          String   @id @default(cuid())
+  nome        String   @unique // BI, Passaporte, etc.
+  descricao   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  documentos  DocumentoIdentificacao[]
+}
+
+// Documentos de identificação
+model DocumentoIdentificacao {
+  id              String      @id @default(cuid())
+  tipoDocumentoId String
+  tipoDocumento   TipoDocumento @relation(fields: [tipoDocumentoId], references: [id])
+  numero          String?
+  nome            String?
+  apelido         String?
+  dataNascimento  String?
+  naturalidade    String?
+  nacionalidade   String?
+  sexo            String?
+  altura          String?
+  filiado         String? // Pai e mãe
+  validade        String?
+  emissao         String?
+  morada          String?
+  rawExtraido     String?      // Dados extraídos em texto cru
+  validado        Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  fotos           DocumentoFoto[]
+}
+
+// Cartas de condução
+model CartaConducao {
+  id              String   @id @default(cuid())
+  numero          String?
+  nome            String?
+  apelido         String?
+  dataNascimento  String?
+  naturalidade    String?
+  categoria       String?  // B, BE, C, CE, etc.
+  validade        String?
+  emissao         String?
+  numeroRegisto   String?
+  morada          String?
+  rawExtraido     String?
+  validado        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  fotos           DocumentoFoto[]
+}
+
+// Fotos de documentos (suporta múltiplas fotos por documento)
+model DocumentoFoto {
+  id            String   @id @default(cuid())
+  documentoId   String?
+  cartaId      String?
+  tipo          String   // FRENTE, VERSO, FOTOGRAFIA, OUTRA
+  url           String   // URL da imagem
+  ordem         Int?     // Ordem de exibição
+  createdAt     DateTime @default(now())
+
+  documento     DocumentoIdentificacao? @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  carta         CartaConducao?         @relation(fields: [cartaId], references: [id], onDelete: Cascade)
+
+  @@index([documentoId])
+  @@index([cartaId])
+}
+
+// Tipos de ativos para aluguer
+model AtivoTipo {
+  id          String   @id @default(cuid())
+  nome        String   @unique // Veículo, Equipamento, etc.
+  descricao   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ativos      Ativo[]
+}
+
+// Ativos para aluguer
+model Ativo {
+  id              String   @id @default(cuid())
+  tipoId          String
+  tipo            AtivoTipo @relation(fields: [tipoId], references: [id])
+  nome            String?
+  descricao       String?
+  marca           String?
+  modelo          String?
+  ano             String?
+  placaMatricula  String?
+  numeroSerie     String?
+  valorDiario     Float?   // Valor do aluguer por dia
+  valorSemanal    Float?
+  valorMensal     Float?
+  disponivel      Boolean  @default(true)
+  fotoUrl         String?
+  dataAquisicao   String?
+  estado          String?  // Novo, Usado, etc.
+  observacoes     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Templates de documentos para preencher
+model DocumentoTemplate {
+  id          String   @id @default(cuid())
+  nome        String
+  descricao   String?
+  tipo        String?  // Contrato, Declaração, etc.
+  conteudo    String?  // Conteúdo do template com placeholders {{campo}}
+  campos      String?  // Lista de campos em formato JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  gerados     DocumentoGerado[]
+}
+
+// Documentos gerados a partir de templates
+model DocumentoGerado {
+  id          String   @id @default(cuid())
+  templateId  String
+  template    DocumentoTemplate @relation(fields: [templateId], references: [id])
+  dados       String?  // Dados usados para preencher em formato JSON
+  arquivoUrl  String?  // URL do documento gerado
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Sistema de Auto-Cura e Monitorização
+
+// Logs de erros do sistema
+model SystemLog {
+  id            String   @id @default(cuid())
+  nivel         String   // ERROR, WARNING, INFO, DEBUG
+  tipo          String   // API, DATABASE, UI, PERFORMANCE, SECURITY
+  mensagem       String
+  detalhes      String?  // JSON com detalhes adicionais
+  arquivo        String?  // Arquivo/caminho onde ocorreu o erro
+  linha          Int?     // Linha do código
+  stackTrace     String?  // Stack trace completo
+  resolved       Boolean  @default(false)  // Se foi resolvido
+  autoResolved   Boolean  @default(false)  // Se foi resolvido automaticamente
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  correcoes     CorrecaoSistema[]
+}
+
+// Análise e correções sugeridas pelo sistema
+model CorrecaoSistema {
+  id            String    @id @default(cuid())
+  logId         String
+  log           SystemLog @relation(fields: [logId], references: [id])
+  tipoProblema  String     // SYNTAX_ERROR, MISSING_FILE, PERFORMANCE, DATABASE, etc.
+  descricao      String     // Descrição do problema
+  causaProvavel   String     // Causa provável
+  solucao       String     // Solução sugerida
+  codigoCorrecao String?    // Código de correção se aplicável
+  severidade     String     // LOW, MEDIUM, HIGH, CRITICAL
+  aplicada       Boolean    @default(false)  // Se a correção foi aplicada
+  confirmada     Boolean    @default(false)  // Se a correção foi confirmada
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+// Monitorização de recursos do sistema
+model SystemMetrics {
+  id              String   @id @default(cuid())
+  tipo            String   // CPU, MEMORY, DISK, API_RESPONSE, DATABASE_QUERY
+  valor           Float    // Valor da métrica
+  unidade          String   // %, ms, MB, etc.
+  status           String   // NORMAL, WARNING, CRITICAL
+  alerta          Boolean   @default(false)
+  descricaoAlerta String?
+  createdAt        DateTime @default(now())
+}
+
+// Ações de auto-cura executadas
+model AutoHealAction {
+  id              String   @id @default(cuid())
+  tipo            String   // RESTART_SERVICE, CLEAR_CACHE, OPTIMIZE_DB, FIX_CONFIG, etc.
+  descricao       String   // Descrição da ação
+  parametro       String?  // Parâmetro ou configuração alterada
+  valorAnterior    String?  // Valor antes da alteração
+  valorNovo       String?  // Valor depois da alteração
+  status          String   // PENDING, EXECUTING, SUCCESS, FAILED
+  mensagemResultado String?
+  createdAt       DateTime @default(now())
+  executadaEm     DateTime?
+}
