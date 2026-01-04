@@ -1,0 +1,8 @@
+# Vercel Ignore File
+# Força o Vercel a ignorar configurações antigas ou conflitos de UI
+
+# Ignorar configurações de rotas manuais
+.vercel/routes.json
+vercel.json
+
+# Força Framework Preset a ser Next.js

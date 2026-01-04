@@ -1,0 +1,32 @@
+{
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "loading": "A carregar...",
+    "search": "Pesquisar...",
+    "error": "Erro",
+    "success": "Sucesso"
+  },
+  "nav": {
+    "documents": "Documentos",
+    "cards": "Cartas",
+    "assets": "Ativos",
+    "generate": "Gerar Docs",
+    "assistant": "Assistente",
+    "heal": "Auto-Cura",
+    "users": "Utilizadores"
+  },
+  "app": {
+    "title": "Sistema de Gestão de Documentos",
+    "description": "Extração automática de dados e gestão de ativos"
+  },
+  "components": {
+    "doc_identification": "Documentos de Identificação",
+    "driving_license": "Cartas de Condução",
+    "assets_management": "Gestão de Ativos",
+    "generate_docs": "Geração de Documentos",
+    "legal_assistant": "Assistente Jurídico",
+    "auto_heal": "Auto-Cura"
+    "user_management": "Gestão de Utilizadores"
+  }
+}

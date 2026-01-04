@@ -1,0 +1,18 @@
+import createMiddleware from 'next-intl/middleware';
+import { defineRouting } from 'next-intl/routing';
+
+export const dynamic = 'force-dynamic';
+
+// Definições de rotas e idiomas
+const routing = defineRouting({
+  // Idiomas disponíveis
+  locales: ['pt', 'en'],
+  
+  // Idioma padrão (Português)
+  defaultLocale: 'pt',
+  
+  // Prefixo de URL: 'as-needed' (Cria /pt/... e /en/...)
+});
+
+// Cria middleware
+export default createMiddleware(routing);

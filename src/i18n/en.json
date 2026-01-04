@@ -1,0 +1,32 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "search": "Search...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "nav": {
+    "documents": "Documents",
+    "cards": "Cards",
+    "assets": "Assets",
+    "generate": "Generate Docs",
+    "assistant": "Legal Assistant",
+    "heal": "Auto-Heal",
+    "users": "Users"
+  },
+  "app": {
+    "title": "Document Management System",
+    "description": "Automated data extraction and asset management"
+  },
+  "components": {
+    "doc_identification": "Identity Documents",
+    "driving_license": "Driving License",
+    "assets_management": "Asset Management",
+    "generate_docs": "Document Generation",
+    "legal_assistant": "Legal Assistant",
+    "auto_heal": "Auto-Heal",
+    "user_management": "User Management"
+  }
+}
