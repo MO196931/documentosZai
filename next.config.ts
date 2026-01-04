@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   nextIntlPlugin: createNextIntlPlugin({
-    locales: ['pt', 'en'],
+    locales: ['pt', 'en', 'fr'],
     defaultLocale: 'pt',
   }),
 };

@@ -1,0 +1,32 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement...",
+    "search": "Rechercher...",
+    "error": "Erreur",
+    "success": "Succès"
+  },
+  "nav": {
+    "documents": "Documents",
+    "cards": "Permis",
+    "assets": "Actifs",
+    "generate": "Générer Docs",
+    "assistant": "Assistant",
+    "heal": "Auto-Soins",
+    "users": "Utilisateurs"
+  },
+  "app": {
+    "title": "Système de Gestion de Documents",
+    "description": "Extraction automatique de données et gestion des actifs"
+  },
+  "components": {
+    "doc_identification": "Documents d'Identité",
+    "driving_license": "Permis de Conduire",
+    "assets_management": "Gestion des Actifs",
+    "generate_docs": "Génération de Documents",
+    "legal_assistant": "Assistant Juridique",
+    "auto_heal": "Auto-Soins",
+    "user_management": "Gestion des Utilisateurs"
+  }
+}
