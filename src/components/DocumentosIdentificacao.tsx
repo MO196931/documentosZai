@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Upload, Camera, X, CheckCircle, AlertCircle, Info, FileText, User, Calendar, MapPin } from 'lucide-react'
+import { Upload, Camera, X, CheckCircle, AlertCircle, Info, FileText, User } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Foto {
@@ -33,9 +32,7 @@ interface DocumentoData {
 export default function DocumentosIdentificacao() {
   const [loading, setLoading] = useState(false)
   const [uploadedFotos, setUploadedFotos] = useState<Foto[]>([])
-  const [documentoData, setDocumentoData] = useState<DocumentoData>({
-    ativo: true,
-  })
+  const [documentoData, setDocumentoData] = useState<DocumentoData>({})
   const [selectedTipo, setSelectedTipo] = useState('BI')
 
   const handleUpload = async (tipo: string, file: File) => {
@@ -91,6 +88,7 @@ export default function DocumentosIdentificacao() {
         body: JSON.stringify({
           ...documentoData,
           tipoDocumentoId: selectedTipo,
+          fotos: uploadedFotos,
         }),
       })
 
@@ -100,7 +98,7 @@ export default function DocumentosIdentificacao() {
 
       toast.success('Documento salvo com sucesso!')
       setUploadedFotos([])
-      setDocumentoData({ ativo: true })
+      setDocumentoData({})
     } catch (error) {
       console.error('Erro ao salvar:', error)
       toast.error('Erro ao salvar documento')
@@ -115,7 +113,7 @@ export default function DocumentosIdentificacao() {
     setUploadedFotos(prev => prev.filter((_, i) => i !== index))
   }
 
-  const getTipoIcone = () => {
+  const getTipoIcon = () => {
     switch (selectedTipo) {
       case 'BI':
         return <FileText className="w-4 h-4" />
@@ -159,7 +157,6 @@ export default function DocumentosIdentificacao() {
               <Label htmlFor="frente" className="flex items-center gap-2">
                 <Upload className="w-4 h-4" />
                 Frente do Documento
-                <Info className="w-3 h-3 ml-auto text-muted-foreground" />
               </Label>
               <div className="relative">
                 <Input
@@ -186,7 +183,6 @@ export default function DocumentosIdentificacao() {
               <Label htmlFor="verso" className="flex items-center gap-2">
                 <Upload className="w-4 h-4" />
                 Verso do Documento
-                <Info className="w-3 h-3 ml-auto text-muted-foreground" />
               </Label>
               <div className="relative">
                 <Input
@@ -213,7 +209,6 @@ export default function DocumentosIdentificacao() {
               <Label htmlFor="fotografia" className="flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Fotografia (Selfie)
-                <Info className="w-3 h-3 ml-auto text-muted-foreground" />
               </Label>
               <div className="relative">
                 <Input
@@ -422,6 +417,11 @@ export default function DocumentosIdentificacao() {
                   value={documentoData.morada || ''}
                   onChange={(e) => handleDataChange('morada', e.target.value)}
                   placeholder="Endereço completo"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-4 border-t">
               <Button
                 onClick={handleSave}
                 disabled={loading || uploadedFotos.length === 0}
@@ -434,10 +434,16 @@ export default function DocumentosIdentificacao() {
               <Button
                 onClick={() => {
                   setUploadedFotos([])
-                  setDocumentoData({ ativo: true })
+                  setDocumentoData({})
                 }}
                 variant="outline"
               >
                 Limpar
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

@@ -11,7 +11,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
-    "deploy:vercel": "vercel --prod",
+    "deploy:vercel": "vercel deploy --prod --yes",
     "deploy:railway": "railway up",
     "docker:build": "docker build -t sistema-gestao-docs .",
     "docker:run": "docker run -p 3000:3000 -v uploads_data:/app/public/uploads -v db_data:/app/db sistema-gestao-docs",
